@@ -39,6 +39,8 @@ namespace Books
 
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
 
+            Debug.Assert(!String.IsNullOrEmpty(connectionString), "connection string is null or empty");
+
             if (DbTypes.IsInMemory())
             {
                 services.AddDbContext<BooksDbContext>(options =>
