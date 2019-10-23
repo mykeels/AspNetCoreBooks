@@ -41,7 +41,7 @@ namespace Books
 
             Debug.Assert(!String.IsNullOrEmpty(connectionString), "connection string is null or empty");
 
-            if (DbTypes.IsInMemory())
+            if (DbTypes.IsInMemory() || _environment.IsTest())
             {
                 services.AddDbContext<BooksDbContext>(options =>
                 {

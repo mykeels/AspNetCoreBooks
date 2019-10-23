@@ -12,7 +12,7 @@ namespace Books.Data
         {
         }
 
-        public override async Task Run()
+        public new void Run()
         {
             throw new NotImplementedException();
         }
@@ -24,6 +24,7 @@ namespace Books.Data
                 UserId = user.Id,
                 Name = _faker.Commerce.Product()
             };
+            Console.WriteLine("Seeding Book " + book.Name);
             _context.Books.Add(book);
             await _context.SaveChangesAsync();
             return book;

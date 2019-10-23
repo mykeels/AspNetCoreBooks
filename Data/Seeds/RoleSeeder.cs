@@ -12,7 +12,7 @@ namespace Books.Data
         {
         }
 
-        public override async Task Run()
+        public new void Run()
         {
             throw new NotImplementedException();
         }
@@ -25,6 +25,7 @@ namespace Books.Data
                 ConcurrencyStamp = Guid.NewGuid().ToString(),
                 Name = roleName
             };
+            Console.WriteLine("Seeding Role " + role.Name);
             _context.Roles.Add(role);
             await _context.SaveChangesAsync();
             return role;

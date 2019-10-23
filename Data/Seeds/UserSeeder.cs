@@ -12,14 +12,14 @@ namespace Books.Data
         {
         }
 
-        public override async Task Run()
+        public new void Run()
         {
             throw new NotImplementedException();
         }
 
         public async Task<IdentityUser<Guid>> Run(IdentityRole<Guid> role)
         {
-            string email = _faker.Internet.Email(provider: "mailinator.com");
+            string email = _faker.Internet.Email(provider: "mailinator.com").ToLower();
             var user = new IdentityUser<Guid>()
             {
                 UserName = email,
@@ -28,6 +28,7 @@ namespace Books.Data
                 PhoneNumber = _faker.Phone.PhoneNumber("0#0########"),
                 PhoneNumberConfirmed = true
             };
+            Console.WriteLine("Seeding User " + user.UserName);
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
