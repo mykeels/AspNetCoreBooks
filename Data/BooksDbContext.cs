@@ -22,6 +22,19 @@ namespace Books.Data
                                     IdentityUserToken<Guid>
                                   >
     {
+        private readonly DbContextOptions<BooksDbContext> _options;
+
         public DbSet<Book> Books { get; set; }
+
+        public DbContextOptions<BooksDbContext> Options {
+            get {
+                return _options;
+            }
+        }
+        
+        public BooksDbContext(DbContextOptions<BooksDbContext> options) : base(options)
+        {
+            _options = options;
+        }
     }
 }
