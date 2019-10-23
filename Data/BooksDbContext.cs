@@ -1,0 +1,27 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Books.Models;
+
+namespace Books.Data
+{
+    public class BooksDbContext : IdentityDbContext<
+                                    IdentityUser<Guid>,
+                                    IdentityRole<Guid>,
+                                    Guid,
+                                    IdentityUserClaim<Guid>,
+                                    IdentityUserRole<Guid>,
+                                    IdentityUserLogin<Guid>,
+                                    IdentityRoleClaim<Guid>,
+                                    IdentityUserToken<Guid>
+                                  >
+    {
+        public DbSet<Book> Books { get; set; }
+    }
+}
