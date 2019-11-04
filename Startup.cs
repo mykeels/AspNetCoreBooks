@@ -75,15 +75,8 @@ namespace Books
                 config.SignIn.RequireConfirmedEmail = true;
             })
                 .AddEntityFrameworkStores<BooksDbContext>()
-                .AddTokenProvider<JwtTokenProvider>(TokenProviders.Default)
                 .AddUserManager<UserManager<IdentityUser<Guid>>>()
                 .AddRoleManager<RoleManager<IdentityRole<Guid>>>();
-
-            services.Configure<DataProtectionTokenProviderOptions>(options =>
-            {
-                options.Name = TokenProviders.Default;
-                options.TokenLifespan = TimeSpan.FromDays(5);
-            });
 
             services.AddTransient<TokenService>();
 
@@ -194,6 +187,7 @@ namespace Books
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

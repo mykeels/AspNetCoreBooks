@@ -38,6 +38,7 @@ namespace Books.Data
                 };
                 _context.Users.Add(dbUser);
                 await _context.SaveChangesAsync();
+                await _userManager.AddPasswordAsync(dbUser, "Pass123$");
                 Console.WriteLine("Seeding User " + dbUser.UserName);
 
                 var userRole = new IdentityUserRole<Guid>()
