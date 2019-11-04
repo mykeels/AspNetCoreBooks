@@ -1,8 +1,11 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Bogus;
 using Books.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Books.Data
 {
@@ -19,15 +22,20 @@ namespace Books.Data
 
         public async Task<Book> Run(IdentityUser<Guid> user)
         {
-            var book = new Book()
+            string bookName = _faker.Commerce.Product();
+            var dbBook = await _context.Books.FirstOrDefaultAsync(b => b.Name == bookName);
+            if (dbBook == null)
             {
-                UserId = user.Id,
-                Name = _faker.Commerce.Product()
-            };
-            Console.WriteLine("Seeding Book " + book.Name);
-            _context.Books.Add(book);
-            await _context.SaveChangesAsync();
-            return book;
+                dbBook = new Book()
+                {
+                    UserId = user.Id,
+                    Name = bookName
+                };
+                _context.Books.Add(dbBook);
+                await _context.SaveChangesAsync();
+                Console.WriteLine("Seeding Book " + dbBook.Name);
+            }
+            return dbBook;
         }
     }
 }

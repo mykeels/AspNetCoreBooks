@@ -1,8 +1,11 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Bogus;
 using Books.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Books.Data
 {
@@ -20,26 +23,33 @@ namespace Books.Data
         public async Task<IdentityUser<Guid>> Run(IdentityRole<Guid> role)
         {
             string email = _faker.Internet.Email(provider: "mailinator.com").ToLower();
-            var user = new IdentityUser<Guid>()
+            var dbUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (dbUser == null)
             {
-                UserName = email,
-                Email = email,
-                EmailConfirmed = true,
-                PhoneNumber = _faker.Phone.PhoneNumber("0#0########"),
-                PhoneNumberConfirmed = true
-            };
-            Console.WriteLine("Seeding User " + user.UserName);
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+                dbUser = new IdentityUser<Guid>()
+                {
+                    UserName = email,
+                    NormalizedUserName = email.ToUpper(),
+                    Email = email,
+                    NormalizedEmail = email.ToUpper(),
+                    EmailConfirmed = true,
+                    PhoneNumber = _faker.Phone.PhoneNumber("0#0########"),
+                    PhoneNumberConfirmed = true
+                };
+                _context.Users.Add(dbUser);
+                await _context.SaveChangesAsync();
+                Console.WriteLine("Seeding User " + dbUser.UserName);
 
-            var userRole = new IdentityUserRole<Guid>()
-            {
-                RoleId = role.Id,
-                UserId = user.Id
-            };
-            _context.UserRoles.Add(userRole);
-            await _context.SaveChangesAsync();
-            return user;
+                var userRole = new IdentityUserRole<Guid>()
+                {
+                    RoleId = role.Id,
+                    UserId = dbUser.Id
+                };
+                _context.UserRoles.Add(userRole);
+                await _context.SaveChangesAsync();
+            }
+
+            return dbUser;
         }
     }
 }

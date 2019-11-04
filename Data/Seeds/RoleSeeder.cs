@@ -1,8 +1,11 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Bogus;
 using Books.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Books.Data
 {
@@ -19,16 +22,21 @@ namespace Books.Data
 
         public async Task<IdentityRole<Guid>> Run(string roleName)
         {
-            var role = new IdentityRole<Guid>()
+            var dbRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
+            if (dbRole == null)
             {
-                NormalizedName = roleName.ToUpper(),
-                ConcurrencyStamp = Guid.NewGuid().ToString(),
-                Name = roleName
-            };
-            Console.WriteLine("Seeding Role " + role.Name);
-            _context.Roles.Add(role);
-            await _context.SaveChangesAsync();
-            return role;
+                dbRole = new IdentityRole<Guid>()
+                {
+                    NormalizedName = roleName.ToUpper(),
+                    ConcurrencyStamp = Guid.NewGuid().ToString(),
+                    Name = roleName
+                };
+                _context.Roles.Add(dbRole);
+                await _context.SaveChangesAsync();
+                Console.WriteLine("Seeding Role " + dbRole.Name);
+            }
+            
+            return dbRole;
         }
     }
 }
